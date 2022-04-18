@@ -24,3 +24,15 @@ CREATE TABLE pedido (
     REFERENCES funcionario(cod_funcionario) 
     	ON DELETE NO ACTION ON UPDATE NO ACTION
 );
+
+
+
+
+
+INSERT INTO pedido (cod_refeicao, cod_cliente, cod_funcionario, dt_pedido, observacao)
+    VALUES (1, 2, 2, STR_TO_DATE('23/01/2022', '%d/%m/%Y'), 'Guaraná')
+    	  ,(9, 3, 8, STR_TO_DATE('10/03/2022', '%d/%m/%Y'), NULL)
+          ,(2, 5, 7, STR_TO_DATE('14/03/2022', '%d/%m/%Y'), NULL)
+          ,(5, 5, 7, STR_TO_DATE('14/03/2022', '%d/%m/%Y'), NULL)
+          ,(11, 5, 7, STR_TO_DATE('14/03/2022','%d/%m/%Y'), NULL)
+          ,(1, 6, 2, STR_TO_DATE('15/03/2022', '%d/%m/%Y'), NULL);
