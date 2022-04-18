@@ -1,8 +1,25 @@
 CREATE TABLE cardapio (
     cod_refeicao INT(11) NOT NULL AUTO_INCREMENT
    ,ds_refeicao VARCHAR(45) NOT NULL
-   ,sn_bebida INT(3) NOT NULL
-   ,preco DECIMAL(11) NOT NULL DEFAULT 00.00
+   ,sn_bebida VARCHAR(1) NOT NULL
+   ,preco DECIMAL(11,2) NOT NULL DEFAULT 00.00
+   ,obs VARCHAR(255) DEFAULT NULL
    ,PRIMARY KEY (cod_refeicao)  
    ,UNIQUE KEY pk_refeicao_cod(cod_refeicao)
 );
+
+
+
+
+INSERT INTO cardapio (ds_refeicao, sn_bebida, preco, obs)
+    VALUES ('Alaminuta'                ,'S', 23.00, 'Fritas, arroz branco, salada de tomate e alface, ovo frito e bife de carne bovina')
+    	,  ('Macarrão 4 Queijos'       ,'N', 25.90, 'Massa spaghetti, Queijo mussarela, catupiry, parmesão e provolone')
+        ,  ('Bife à parmegiana'        ,'S', 27.00, 'Bife bovino coberto por queijo e acompanhado por uma porção de fritas')
+        ,  ('Porção de Fritas Pequena' ,'N', 6.00 , 'Fritas Pequena, serve 1 pessoa')
+    	,  ('Porção de Fritas Média'   ,'N', 8.00 , 'Fritas Média, serve 3 pessoas')
+        ,  ('Porção de Fritas Grande'  ,'N', 10.00, 'Fritas Grande, serve 6 pessoas')
+        ,  ('Fritas com Queijo e Bacon','N', 15.00, 'Fritas cobertas por queijo cheddar e catupiry e bacon')
+        ,  ('Porção de Onion Ring'     ,'N', 9.00 , 'Porção Grande, serve até 5 pessoas')
+        ,  ('Canelone'                 ,'N', 27.00, 'Rolinhos de massa fresquinha recheados ao molho branco 4 queijos')
+        ,  ('H2O Limoneto'             ,'S', 7.00 , 'Bebida gaseificada sabor limão, H2O Limoneto')
+	    ,  ('Água Com Gás'             ,'S', 5.00 , 'Bebida gaseificada, Água Com Gás');
