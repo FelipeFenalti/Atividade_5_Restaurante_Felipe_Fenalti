@@ -1,0 +1,13 @@
+CREATE DATABASE restaurante_Atv_5
+
+
+CREATE TABLE cliente (
+    cod_cliente INT(11) NOT NULL AUTO_INCREMENT
+   ,nome_cliente VARCHAR(45) NOT NULL
+   ,qtd_pedido INT(3) DEFAULT 0
+   ,qtd_cancelado INT(3) DEFAULT 0
+   ,sn_reserva VARCHAR(1) DEFAULT 'N'
+   ,ds_alergia VARCHAR(100) DEFAULT NULL
+   ,PRIMARY KEY (cod_cliente)  
+   ,UNIQUE KEY pk_cliente_cod(cod_cliente)
+);
