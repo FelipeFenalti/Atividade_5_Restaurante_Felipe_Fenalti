@@ -1,0 +1,21 @@
+DELIMITER $
+CREATE PROCEDURE ajuste_formato_obs() BEGIN
+
+DECLARE obs varchar(255);
+DECLARE cd_pedido int;
+
+DECLARE C_OBS_PEDIDO CURSOR FOR SELECT cod_pedido , observacao FROM pedido;
+OPEN C_OBS_PEDIDO;
+
+LOOP
+  FETCH C_OBS_PEDIDO INTO cd_pedido, obs;
+
+  IF obs is not null THEN
+    UPDATE pedido SET observacao = UPPER(obs)
+    WHERE cod_pedido = cd_pedido;
+  END IF;
+END LOOP;
+CLOSE C_OBS_PEDIDO;
+END
+
+EXECUTE ajuste_formato_obs();
