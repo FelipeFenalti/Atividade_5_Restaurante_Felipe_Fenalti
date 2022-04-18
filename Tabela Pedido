@@ -1,0 +1,26 @@
+CREATE TABLE pedido (
+    cod_pedido INT(11) NOT NULL AUTO_INCREMENT
+   ,cod_refeicao INT(11) NOT NULL
+   ,cod_cliente INT(11) NOT NULL
+   ,cod_funcionario INT(11) NOT NULL
+   ,dt_pedido DATE NOT NULL
+   ,sn_cancelado VARCHAR INT(1) DEFAULT 'N'
+   ,observacao VARCHAR(100) DEFAULT NULL
+   ,PRIMARY KEY (cod_pedido)  
+   ,UNIQUE KEY pk_pedido_cod (cod_pedido)
+     	,KEY fk_pedido_cardapio_cod_idx(cod_refeicao)
+   	  ,KEY fk_pedido_cliente_cod_idx(cod_cliente)
+    	,KEY fk_pedido_funcionario_cod_idx(cod_funcionario)
+   ,CONSTRAINT fk_pedido_cardapio_cod 
+    FOREIGN KEY (cod_refeicao)
+    REFERENCES cardapio(cod_refeicao) 
+    	ON DELETE NO ACTION ON UPDATE NO ACTION
+   ,CONSTRAINT fk_pedido_cliente_cod 
+    FOREIGN KEY (cod_cliente)
+    REFERENCES cliente(cod_cliente) 
+    	ON DELETE NO ACTION ON UPDATE NO ACTION
+   ,CONSTRAINT fk_pedido_funcionario_cod 
+    FOREIGN KEY (cod_funcionario)
+    REFERENCES funcionario(cod_funcionario) 
+    	ON DELETE NO ACTION ON UPDATE NO ACTION
+);
