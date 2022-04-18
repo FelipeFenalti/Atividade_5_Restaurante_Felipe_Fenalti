@@ -15,3 +15,18 @@ CREATE TABLE funcionario (
     REFERENCES cargo(cod_cargo) 
     	ON DELETE NO ACTION ON UPDATE NO ACTION
 );
+
+
+
+
+
+INSERT INTO funcionario (nome_funcionario, cod_cargo, fone, email, dt_inicio, dt_nascimento, dt_fim)
+    VALUES 
+    ('Mariana da Silva Nascimento', 4, 99287794, 'mariana.nascimento@MelhorSabor.com.br',  STR_TO_DATE('01/03/2021', '%d/%m/%Y'),  STR_TO_DATE('30/06/1981', '%d/%m/%Y'), NULL)
+   ,('William José dos Santos', 1, 995887865, 'william.santos@MelhorSabor.com.br',  STR_TO_DATE('12/06/2021', '%d/%m/%Y'),  STR_TO_DATE('31/01/1995', '%d/%m/%Y'), NULL)
+   ,('Carla Rojas Pereira', 1, 994332189, 'carla.pereira@MelhorSabor.com.br',  STR_TO_DATE('15/08/2021', '%d/%m/%Y'),  STR_TO_DATE('22/09/1993', '%d/%m/%Y'), STR_TO_DATE('02/02/2022', '%d/%m/%Y'))
+   ,('Antônio Melo de Castro', 7, 995956823, 'antonio.castro@MelhorSabor.com.br',  STR_TO_DATE('30/07/2015', '%d/%m/%Y'),  STR_TO_DATE('31/01/1986', '%d/%m/%Y'), NULL)
+   ,('Melissa Duarte de Oliveira', 3, 994547833, 'melissa.oliveira@MelhorSabor.com.br',  STR_TO_DATE('15/08/2021', '%d/%m/%Y'),  STR_TO_DATE('11/05/1991', '%d/%m/%Y'), NULL)
+   ,('Heitor Alberto Rosa', 3, 992142142, 'heitor.rosa@MelhorSabor.com.br',  STR_TO_DATE('15/08/2021', '%d/%m/%Y'),  STR_TO_DATE('04/09/1987', '%d/%m/%Y'), NULL)
+   ,('Eduardo Ribas Teixeira', 1, 995882347, 'eduardo.teixeira@MelhorSabor.com.br',  STR_TO_DATE('20/08/2021', '%d/%m/%Y'),  STR_TO_DATE('24/11/1998', '%d/%m/%Y'), NULL)
+   ,('Rogério Quadros Souza', 1, 995847585, 'rogerio.souza@MelhorSabor.com.br',  STR_TO_DATE('10/01/2022', '%d/%m/%Y'),  STR_TO_DATE('05/01/2002', '%d/%m/%Y'), NULL);
