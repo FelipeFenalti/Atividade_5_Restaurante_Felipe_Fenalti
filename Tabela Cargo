@@ -6,3 +6,16 @@ CREATE TABLE cargo (
    ,PRIMARY KEY (cod_cargo)  
    ,UNIQUE KEY pk_funcao_cod (cod_cargo)
 );
+
+
+
+
+
+INSERT INTO cargo (descricao, sn_ativo)
+    VALUES ('Garçom'                   ,'S')
+    	,  ('Balconista'               ,'S')
+        ,  ('Cozinheiro(a)'            ,'S')
+        ,  ('Gerente'                  ,'S')
+    	,  ('Chefe de Cozinha'         ,'S')
+        ,  ('Chapeiro(a)'              ,'N')
+        ,  ('Segurança'                ,'S');
