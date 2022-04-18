@@ -11,6 +11,7 @@ CREATE TABLE cardapio (
 
 
 
+
 INSERT INTO cardapio (ds_refeicao, sn_bebida, preco, obs)
     VALUES ('Alaminuta'                ,'S', 23.00, 'Fritas, arroz branco, salada de tomate e alface, ovo frito e bife de carne bovina')
     	,  ('Macarrão 4 Queijos'       ,'N', 25.90, 'Massa spaghetti, Queijo mussarela, catupiry, parmesão e provolone')
