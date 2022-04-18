@@ -1,0 +1,17 @@
+CREATE TABLE funcionario (
+    cod_funcionario INT(11) NOT NULL AUTO_INCREMENT
+   ,nome_funcionario VARCHAR(100) NOT NULL
+   ,cod_cargo INT(11) NOT NULL
+   ,fone int(20)
+   ,email VARCHAR(100)
+   ,dt_inicio DATE NOT NULL
+   ,dt_nascimento DATE NOT NULL
+   ,dt_fim DATE DEFAULT NULL
+   ,PRIMARY KEY (cod_funcionario)  
+   ,UNIQUE KEY pk_funcionario_cod (cod_funcionario)
+   		,KEY fk_funcionario_cargo_cod_idx(cod_cargo)
+   ,CONSTRAINT fk_funcionario_cargo_cod 
+    FOREIGN KEY (cod_cargo)
+    REFERENCES cargo(cod_cargo) 
+    	ON DELETE NO ACTION ON UPDATE NO ACTION
+);
