@@ -14,10 +14,11 @@ CREATE TABLE cliente (
 
 
 
+
 INSERT INTO CLIENTE (nome_cliente, sn_reserva, ds_alergia)
     VALUES ('Carlos Alberto','S', NULL)
     	,  ('Felipe Fenalti','N', NULL)
         ,  ('Eduardo Oliveira','N', 'Lactose')
-        .  ('Juliana Almeida','S', NULL)
+        ,  ('Juliana Almeida','S', NULL)
     	,  ('Marcos da Silva','N', 'Pimenta')
         ,  ('Luciana Pedrini','N', NULL);
