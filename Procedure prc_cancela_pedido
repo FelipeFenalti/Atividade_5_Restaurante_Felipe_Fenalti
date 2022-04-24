@@ -1,0 +1,61 @@
+-- Criação da Procedure prc_cancela_pedido
+
+DELIMITER $
+
+CREATE OR REPLACE PROCEDURE prc_cancela_pedido() 
+
+BEGIN
+
+DECLARE cd_ped, cd_ref, cd_cli, cd_func int;
+DECLARE vl_preco DECIMAL(11.2);
+DECLARE sn_cancel VARCHAR(5);
+DECLARE data_pedido DATE;
+
+DECLARE C_CANCELADO CURSOR FOR 
+ 
+SELECT pedido.cod_pedido
+      ,pedido.cod_refeicao	
+      ,pedido.cod_cliente
+      ,pedido.cod_funcionario
+      ,pedido.dt_pedido
+      ,pedido.sn_cancelado
+      ,cardapio.preco
+  FROM pedido, cardapio
+ WHERE sn_cancelado = 'S'
+   AND pedido.cod_refeicao = cardapio.cod_refeicao;
+
+OPEN C_CANCELADO; 
+
+LOOP
+  FETCH C_CANCELADO INTO cd_ped, cd_ref, cd_cli, cd_func, data_pedido, sn_cancel, vl_preco;
+ 
+ IF cd_ped NOT IN (SELECT DISTINCT COD_PEDIDO FROM pedido_cancelado)
+ 
+ THEN
+ 
+    INSERT INTO PEDIDO_CANCELADO (
+        			 cod_pedido
+       				,cod_refeicao
+       				,cod_cliente
+       				,cod_funcionario
+       				,dt_pedido
+       				,dt_cancelado )
+     		 VALUES (
+  					cd_ped
+                   ,cd_ref
+                   ,cd_cli
+                   ,cd_func
+                   ,data_pedido
+                   ,CURRENT_DATE
+                   );
+                   
+     UPDATE CONTA SET VALOR_TOTAL = VALOR_TOTAL - vl_preco
+     	WHERE CONTA.cod_cliente = cd_cli;
+
+END IF;
+
+END LOOP;
+
+CLOSE C_CANCELADO;
+
+END $
