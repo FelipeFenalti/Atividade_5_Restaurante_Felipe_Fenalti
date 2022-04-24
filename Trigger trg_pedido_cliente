@@ -1,3 +1,5 @@
+-- Criação da Trigger trg_pedido_cliente
+
 DELIMITER $
 
 CREATE OR REPLACE TRIGGER trg_pedido_cliente
@@ -7,6 +9,6 @@ FOR EACH ROW
 
 BEGIN 
 	UPDATE CLIENTE SET QTD_PEDIDO = QTD_PEDIDO + 1
-    	WHERE CLIENTE.COD_CLIENTE = NEW.COD_CLIENT;
+    	WHERE CLIENTE.COD_CLIENTE = NEW.COD_CLIENTE;
         
 END $
