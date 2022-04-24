@@ -1,3 +1,5 @@
+-- Criação da Tabela cardapio 
+
 CREATE TABLE cardapio (
     cod_refeicao INT(11) NOT NULL AUTO_INCREMENT
    ,ds_refeicao VARCHAR(45) NOT NULL
@@ -23,4 +25,4 @@ INSERT INTO cardapio (ds_refeicao, sn_bebida, preco, obs)
         ,  ('Porção de Onion Ring'     ,'N', 9.00 , 'Porção Grande, serve até 5 pessoas')
         ,  ('Canelone'                 ,'N', 27.00, 'Rolinhos de massa fresquinha recheados ao molho branco 4 queijos')
         ,  ('H2O Limoneto'             ,'S', 7.00 , 'Bebida gaseificada sabor limão, H2O Limoneto')
-	    ,  ('Água Com Gás'             ,'S', 5.00 , 'Bebida gaseificada, Água Com Gás');
+	,  ('Água Com Gás'             ,'S', 5.00 , 'Bebida gaseificada, Água Com Gás');
