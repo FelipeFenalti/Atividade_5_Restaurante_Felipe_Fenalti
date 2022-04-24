@@ -1,0 +1,47 @@
+-- Criação da Trigger trg_adiciona_conta
+
+DELIMITER $
+
+CREATE OR REPLACE TRIGGER trg_adiciona_conta
+AFTER INSERT
+ON PEDIDO
+FOR EACH ROW
+
+BEGIN 
+
+DECLARE V_PRECO DECIMAL(11.2);
+
+
+SELECT PRECO INTO V_PRECO
+  FROM CARDAPIO 
+ WHERE CARDAPIO.COD_REFEICAO = NEW.COD_REFEICAO;
+ 
+
+IF NEW.COD_CLIENTE NOT IN (SELECT DISTINCT COD_CLIENTE FROM CONTA) 
+
+THEN 
+
+     INSERT INTO conta (
+         		 cod_cliente
+			,ultimo_valor 
+        		,valor_total )
+       VALUES (
+           		 NEW.COD_CLIENTE
+           		,V_PRECO
+           		,V_PRECO
+         	  );
+     
+  ELSEIF NEW.COD_CLIENTE IN (SELECT DISTINCT COD_CLIENTE FROM CONTA) 
+  
+  THEN 
+  		
+     UPDATE conta SET ultimo_valor = V_PRECO
+     		WHERE CONTA.COD_CLIENTE = NEW.COD_CLIENTE;
+
+     UPDATE conta SET valor_total = valor_total + V_PRECO
+     		WHERE CONTA.COD_CLIENTE = NEW.COD_CLIENTE;
+     
+end if;
+       
+        
+END $
