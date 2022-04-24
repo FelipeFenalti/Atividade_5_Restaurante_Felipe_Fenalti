@@ -1,0 +1,25 @@
+-- Criação da Procedure prc_desconto_aniversario
+
+DELIMITER $
+
+CREATE OR REPLACE PROCEDURE prc_desconto_aniversario() 
+
+BEGIN
+
+DECLARE cd_cliente int;
+ 
+SELECT cliente.cod_cliente INTO cd_cliente
+  FROM cliente, pedido 
+ WHERE cliente.cod_cliente = pedido.cod_cliente
+   AND SUBSTR(pedido.dt_pedido,6,7) = SUBSTR(cliente.dt_nascimento,6,7)
+   AND SUBSTR(CURRENT_DATE,6,7) = SUBSTR(cliente.dt_nascimento,6,7);
+ 
+ 
+    UPDATE conta SET valor_total = valor_total - ultimo_valor
+    WHERE cod_cliente = cd_cliente;
+    
+    UPDATE conta SET ultimo_valor = 00.00
+    WHERE cod_cliente = cd_cliente;
+  
+
+END $
