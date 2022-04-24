@@ -1,15 +1,17 @@
+-- Criação da Tabela pedido 
+
 CREATE TABLE pedido (
     cod_pedido INT(11) NOT NULL AUTO_INCREMENT
    ,cod_refeicao INT(11) NOT NULL
    ,cod_cliente INT(11) NOT NULL
    ,cod_funcionario INT(11) NOT NULL
    ,dt_pedido DATE NOT NULL
-   ,sn_cancelado VARCHAR INT(1) DEFAULT 'N'
+   ,sn_cancelado VARCHAR(1) DEFAULT 'N'
    ,observacao VARCHAR(100) DEFAULT NULL
    ,PRIMARY KEY (cod_pedido)  
    ,UNIQUE KEY pk_pedido_cod (cod_pedido)
      	,KEY fk_pedido_cardapio_cod_idx(cod_refeicao)
-   	  ,KEY fk_pedido_cliente_cod_idx(cod_cliente)
+   	,KEY fk_pedido_cliente_cod_idx(cod_cliente)
     	,KEY fk_pedido_funcionario_cod_idx(cod_funcionario)
    ,CONSTRAINT fk_pedido_cardapio_cod 
     FOREIGN KEY (cod_refeicao)
@@ -28,11 +30,28 @@ CREATE TABLE pedido (
 
 
 
+-- Inserções Iniciais para popular
 
 INSERT INTO pedido (cod_refeicao, cod_cliente, cod_funcionario, dt_pedido, observacao)
-    VALUES (1, 2, 2, STR_TO_DATE('23/01/2022', '%d/%m/%Y'), 'Guaraná')
-    	  ,(9, 3, 8, STR_TO_DATE('10/03/2022', '%d/%m/%Y'), NULL)
-          ,(2, 5, 7, STR_TO_DATE('14/03/2022', '%d/%m/%Y'), NULL)
-          ,(5, 5, 7, STR_TO_DATE('14/03/2022', '%d/%m/%Y'), NULL)
-          ,(11, 5, 7, STR_TO_DATE('14/03/2022','%d/%m/%Y'), NULL)
-          ,(1, 6, 2, STR_TO_DATE('15/03/2022', '%d/%m/%Y'), NULL);
+    VALUES (1, 2, 2,  CURRENT_DATE, 'Guaraná')
+    	  ,(9, 3, 8,  CURRENT_DATE, NULL)
+          ,(2, 5, 7,  CURRENT_DATE, NULL)
+          ,(5, 5, 7,  CURRENT_DATE, 'sem tomate')
+          ,(11, 1, 7, CURRENT_DATE, 'dobro de queijo')
+          ,(1, 6, 2,  CURRENT_DATE, NULL);
+          
+          
+          
+-- Inserções para testar a trigger e procedure
+
+INSERT INTO pedido (cod_refeicao, cod_cliente, cod_funcionario, dt_pedido, observacao)
+    VALUES (4, 4, 2, STR_TO_DATE('23/04/2022', '%d/%m/%Y'), NULL);
+
+
+INSERT INTO pedido (cod_refeicao, cod_cliente, cod_funcionario, dt_pedido, observacao)
+    VALUES (6, 3, 2, STR_TO_DATE('23/04/2022', '%d/%m/%Y'), NULL);
+
+
+-- Update para testar Trigger trg_cancela_pedido
+
+UPDATE pedido SET SN_CANCELADO = 'S' WHERE COD_PEDIDO = 6;
