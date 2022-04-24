@@ -1,0 +1,33 @@
+-- Criação da Tabela pedido_cancelado
+
+CREATE TABLE pedido_cancelado (
+    cod_ped_cancelado INT(11) NOT NULL AUTO_INCREMENT
+   ,cod_pedido INT(11) NOT NULL 
+   ,cod_refeicao INT(11) NOT NULL
+   ,cod_cliente INT(11) NOT NULL
+   ,cod_funcionario INT(11) NOT NULL
+   ,dt_pedido DATE NOT NULL
+   ,dt_cancelado DATE NOT NULL
+   ,PRIMARY KEY (cod_ped_cancelado)  
+   ,UNIQUE KEY pk_pedido_cancelado_cod (cod_ped_cancelado)
+    	,KEY fk_pedido_cancelado_pedido_cod_idx(cod_pedido)
+     	,KEY fk_pedido_cancelado_cardapio_cod_idx(cod_refeicao)
+   		,KEY fk_pedido_cancelado_cliente_cod_idx(cod_cliente)
+    	,KEY fk_pedido_cancelado_funcionario_cod_idx(cod_funcionario)
+    ,CONSTRAINT fk_pedido_cancelado_pedido_cod 
+    FOREIGN KEY (cod_pedido)
+    REFERENCES pedido(cod_pedido) 
+    	ON DELETE NO ACTION ON UPDATE NO ACTION
+   ,CONSTRAINT fk_pedido_cancelado_cardapio_cod 
+    FOREIGN KEY (cod_refeicao)
+    REFERENCES cardapio(cod_refeicao) 
+    	ON DELETE NO ACTION ON UPDATE NO ACTION
+   ,CONSTRAINT fk_pedido_cancelado_cliente_cod 
+    FOREIGN KEY (cod_cliente)
+    REFERENCES cliente(cod_cliente) 
+    	ON DELETE NO ACTION ON UPDATE NO ACTION
+   ,CONSTRAINT fk_pedido_cancelado_funcionario_cod 
+    FOREIGN KEY (cod_funcionario)
+    REFERENCES funcionario(cod_funcionario) 
+    	ON DELETE NO ACTION ON UPDATE NO ACTION
+);
