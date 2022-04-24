@@ -1,13 +1,15 @@
-CREATE DATABASE restaurante_Atv_5
+CREATE DATABASE restaurante_atividade5
 
+
+-- Criação da Tabela cliente
 
 CREATE TABLE cliente (
     cod_cliente INT(11) NOT NULL AUTO_INCREMENT
    ,nome_cliente VARCHAR(45) NOT NULL
    ,qtd_pedido INT(3) DEFAULT 0
-   ,qtd_cancelado INT(3) DEFAULT 0
    ,sn_reserva VARCHAR(1) DEFAULT 'N'
    ,ds_alergia VARCHAR(100) DEFAULT NULL
+   ,dt_nascimento DATE NOT NULL
    ,PRIMARY KEY (cod_cliente)  
    ,UNIQUE KEY pk_cliente_cod(cod_cliente)
 );
@@ -15,10 +17,11 @@ CREATE TABLE cliente (
 
 
 
-INSERT INTO CLIENTE (nome_cliente, sn_reserva, ds_alergia)
-    VALUES ('Carlos Alberto','S', NULL)
-    	,  ('Felipe Fenalti','N', NULL)
-        ,  ('Eduardo Oliveira','N', 'Lactose')
-        ,  ('Juliana Almeida','S', NULL)
-    	,  ('Marcos da Silva','N', 'Pimenta')
-        ,  ('Luciana Pedrini','N', NULL);
+INSERT INTO CLIENTE (nome_cliente, sn_reserva, ds_alergia, dt_nascimento)
+    VALUES ('Carlos Alberto'  ,'S', NULL,     STR_TO_DATE('24/04/1990', '%d/%m/%Y'))
+    	,  ('Felipe Fenalti'  ,'N', NULL,     STR_TO_DATE('28/01/2003', '%d/%m/%Y'))
+        ,  ('Eduardo Oliveira','N','Lactose', STR_TO_DATE('25/04/1981', '%d/%m/%Y'))
+        ,  ('Juliana Almeida' ,'S', NULL,     STR_TO_DATE('30/06/1984', '%d/%m/%Y'))
+    	,  ('Marcos da Silva' ,'N','Pimenta', STR_TO_DATE('23/04/1993', '%d/%m/%Y'))
+        ,  ('Luciana Pedrini' ,'N', NULL,     STR_TO_DATE('21/04/1998', '%d/%m/%Y'))
+        ,  ('Rodrigo Luz'     ,'N','Lactose', STR_TO_DATE('25/04/1995', '%d/%m/%Y'));
