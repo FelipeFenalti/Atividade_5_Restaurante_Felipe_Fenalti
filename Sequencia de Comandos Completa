@@ -1,0 +1,394 @@
+CREATE DATABASE restaurante_Atividade5;
+
+
+-- Criação da Tabela cliente
+
+CREATE TABLE cliente (
+    cod_cliente INT(11) NOT NULL AUTO_INCREMENT
+   ,nome_cliente VARCHAR(45) NOT NULL
+   ,qtd_pedido INT(3) DEFAULT 0
+   ,sn_reserva VARCHAR(1) DEFAULT 'N'
+   ,ds_alergia VARCHAR(100) DEFAULT NULL
+   ,dt_nascimento DATE NOT NULL
+   ,PRIMARY KEY (cod_cliente)  
+   ,UNIQUE KEY pk_cliente_cod(cod_cliente)
+);
+
+
+
+-- Criação da Tabela Conta
+
+CREATE TABLE conta (
+    cod_conta INT(11) NOT NULL AUTO_INCREMENT
+   ,cod_cliente INT(11) NOT NULL
+   ,ultimo_valor DECIMAL(11,2) NOT NULL DEFAULT 00.00
+   ,valor_total DECIMAL(11,2) NOT NULL DEFAULT 00.00
+   ,PRIMARY KEY (cod_conta)  
+   ,UNIQUE KEY pk_conta_cod(cod_conta)
+    	,KEY fk_conta_cliente_cod_idx(cod_cliente)
+   ,CONSTRAINT fk_conta_cliente_cod 
+    FOREIGN KEY (cod_cliente)
+    REFERENCES cliente(cod_cliente) 
+    	ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+
+
+-- Criação da Tabela cardapio 
+
+CREATE TABLE cardapio (
+    cod_refeicao INT(11) NOT NULL AUTO_INCREMENT
+   ,ds_refeicao VARCHAR(45) NOT NULL
+   ,sn_bebida VARCHAR(1) NOT NULL
+   ,preco DECIMAL(11,2) NOT NULL DEFAULT 00.00
+   ,obs VARCHAR(255) DEFAULT NULL
+   ,PRIMARY KEY (cod_refeicao)  
+   ,UNIQUE KEY pk_refeicao_cod(cod_refeicao)
+);
+
+
+
+-- Criação da Tabela cargo 
+
+CREATE TABLE cargo (
+    cod_cargo INT(11) NOT NULL AUTO_INCREMENT
+   ,descricao VARCHAR(100) NOT NULL
+   ,sn_ativo VARCHAR(1) NOT NULL DEFAULT 'S'
+   ,PRIMARY KEY (cod_cargo)  
+   ,UNIQUE KEY pk_funcao_cod (cod_cargo)
+);
+
+
+
+
+-- Criação da Tabela funcionario 
+
+CREATE TABLE funcionario (
+    cod_funcionario INT(11) NOT NULL AUTO_INCREMENT
+   ,nome_funcionario VARCHAR(100) NOT NULL
+   ,cod_cargo INT(11) NOT NULL
+   ,fone int(20)
+   ,email VARCHAR(100)
+   ,dt_inicio DATE NOT NULL
+   ,dt_nascimento DATE NOT NULL
+   ,dt_fim DATE DEFAULT NULL
+   ,PRIMARY KEY (cod_funcionario)  
+   ,UNIQUE KEY pk_funcionario_cod (cod_funcionario)
+   		,KEY fk_funcionario_cargo_cod_idx(cod_cargo)
+   ,CONSTRAINT fk_funcionario_cargo_cod 
+    FOREIGN KEY (cod_cargo)
+    REFERENCES cargo(cod_cargo) 
+    	ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+
+
+
+-- Criação da Tabela pedido 
+
+CREATE TABLE pedido (
+    cod_pedido INT(11) NOT NULL AUTO_INCREMENT
+   ,cod_refeicao INT(11) NOT NULL
+   ,cod_cliente INT(11) NOT NULL
+   ,cod_funcionario INT(11) NOT NULL
+   ,dt_pedido DATE NOT NULL
+   ,sn_cancelado VARCHAR(1) DEFAULT 'N'
+   ,observacao VARCHAR(100) DEFAULT NULL
+   ,PRIMARY KEY (cod_pedido)  
+   ,UNIQUE KEY pk_pedido_cod (cod_pedido)
+     	,KEY fk_pedido_cardapio_cod_idx(cod_refeicao)
+   	,KEY fk_pedido_cliente_cod_idx(cod_cliente)
+    	,KEY fk_pedido_funcionario_cod_idx(cod_funcionario)
+   ,CONSTRAINT fk_pedido_cardapio_cod 
+    FOREIGN KEY (cod_refeicao)
+    REFERENCES cardapio(cod_refeicao) 
+    	ON DELETE NO ACTION ON UPDATE NO ACTION
+   ,CONSTRAINT fk_pedido_cliente_cod 
+    FOREIGN KEY (cod_cliente)
+    REFERENCES cliente(cod_cliente) 
+    	ON DELETE NO ACTION ON UPDATE NO ACTION
+   ,CONSTRAINT fk_pedido_funcionario_cod 
+    FOREIGN KEY (cod_funcionario)
+    REFERENCES funcionario(cod_funcionario) 
+    	ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+
+
+
+-- Criação da Tabela pedido_cancelado
+
+CREATE TABLE pedido_cancelado (
+    cod_ped_cancelado INT(11) NOT NULL AUTO_INCREMENT
+   ,cod_pedido INT(11) NOT NULL 
+   ,cod_refeicao INT(11) NOT NULL
+   ,cod_cliente INT(11) NOT NULL
+   ,cod_funcionario INT(11) NOT NULL
+   ,dt_pedido DATE NOT NULL
+   ,dt_cancelado DATE NOT NULL
+   ,PRIMARY KEY (cod_ped_cancelado)  
+   ,UNIQUE KEY pk_pedido_cancelado_cod (cod_ped_cancelado)
+    	,KEY fk_pedido_cancelado_pedido_cod_idx(cod_pedido)
+     	,KEY fk_pedido_cancelado_cardapio_cod_idx(cod_refeicao)
+   		,KEY fk_pedido_cancelado_cliente_cod_idx(cod_cliente)
+    	,KEY fk_pedido_cancelado_funcionario_cod_idx(cod_funcionario)
+    ,CONSTRAINT fk_pedido_cancelado_pedido_cod 
+    FOREIGN KEY (cod_pedido)
+    REFERENCES pedido(cod_pedido) 
+    	ON DELETE NO ACTION ON UPDATE NO ACTION
+   ,CONSTRAINT fk_pedido_cancelado_cardapio_cod 
+    FOREIGN KEY (cod_refeicao)
+    REFERENCES cardapio(cod_refeicao) 
+    	ON DELETE NO ACTION ON UPDATE NO ACTION
+   ,CONSTRAINT fk_pedido_cancelado_cliente_cod 
+    FOREIGN KEY (cod_cliente)
+    REFERENCES cliente(cod_cliente) 
+    	ON DELETE NO ACTION ON UPDATE NO ACTION
+   ,CONSTRAINT fk_pedido_cancelado_funcionario_cod 
+    FOREIGN KEY (cod_funcionario)
+    REFERENCES funcionario(cod_funcionario) 
+    	ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+
+-- Criação da Trigger trg_pedido_cliente
+
+DELIMITER $
+
+CREATE OR REPLACE TRIGGER trg_pedido_cliente
+AFTER INSERT
+ON PEDIDO
+FOR EACH ROW
+
+BEGIN 
+	UPDATE CLIENTE SET QTD_PEDIDO = QTD_PEDIDO + 1
+    	WHERE CLIENTE.COD_CLIENTE = NEW.COD_CLIENTE;
+        
+END $
+
+
+
+-- Criação da Trigger trg_adiciona_conta
+
+DELIMITER $
+
+CREATE OR REPLACE TRIGGER trg_adiciona_conta
+AFTER INSERT
+ON PEDIDO
+FOR EACH ROW
+
+BEGIN 
+
+DECLARE V_PRECO DECIMAL(11.2);
+
+
+SELECT PRECO INTO V_PRECO
+  FROM CARDAPIO 
+ WHERE CARDAPIO.COD_REFEICAO = NEW.COD_REFEICAO;
+ 
+
+IF NEW.COD_CLIENTE NOT IN (SELECT DISTINCT COD_CLIENTE FROM CONTA) 
+
+THEN 
+
+     INSERT INTO conta (
+         		 cod_cliente
+			,ultimo_valor 
+        		,valor_total )
+       VALUES (
+           		 NEW.COD_CLIENTE
+           		,V_PRECO
+           		,V_PRECO
+         	  );
+     
+  ELSEIF NEW.COD_CLIENTE IN (SELECT DISTINCT COD_CLIENTE FROM CONTA) 
+  
+  THEN 
+  		
+     UPDATE conta SET ultimo_valor = V_PRECO
+     		WHERE CONTA.COD_CLIENTE = NEW.COD_CLIENTE;
+
+     UPDATE conta SET valor_total = valor_total + V_PRECO
+     		WHERE CONTA.COD_CLIENTE = NEW.COD_CLIENTE;
+     
+end if;
+       
+        
+END $
+
+
+-- INSERÇÕES NAS TABELAS
+
+
+INSERT INTO CLIENTE (nome_cliente, sn_reserva, ds_alergia, dt_nascimento)
+    VALUES ('Carlos Alberto'  ,'S', NULL,     STR_TO_DATE('24/04/1990', '%d/%m/%Y'))
+    	,  ('Felipe Fenalti'  ,'N', NULL,     STR_TO_DATE('28/01/2003', '%d/%m/%Y'))
+        ,  ('Eduardo Oliveira','N','Lactose', STR_TO_DATE('25/04/1981', '%d/%m/%Y'))
+        ,  ('Juliana Almeida' ,'S', NULL,     STR_TO_DATE('30/06/1984', '%d/%m/%Y'))
+    	,  ('Marcos da Silva' ,'N','Pimenta', STR_TO_DATE('23/04/1993', '%d/%m/%Y'))
+        ,  ('Luciana Pedrini' ,'N', NULL,     STR_TO_DATE('21/04/1998', '%d/%m/%Y'))
+        ,  ('Rodrigo Luz'     ,'N','Lactose', STR_TO_DATE('25/04/1995', '%d/%m/%Y'));
+
+
+
+INSERT INTO cardapio (ds_refeicao, sn_bebida, preco, obs)
+    VALUES ('Alaminuta'                ,'S', 23.00, 'Fritas, arroz branco, salada de tomate e alface, ovo frito e bife de carne bovina')
+    	,  ('Macarrão 4 Queijos'       ,'N', 25.90, 'Massa spaghetti, Queijo mussarela, catupiry, parmesão e provolone')
+        ,  ('Bife à parmegiana'        ,'S', 27.00, 'Bife bovino coberto por queijo e acompanhado por uma porção de fritas')
+        ,  ('Porção de Fritas Pequena' ,'N', 6.00 , 'Fritas Pequena, serve 1 pessoa')
+    	,  ('Porção de Fritas Média'   ,'N', 8.00 , 'Fritas Média, serve 3 pessoas')
+        ,  ('Porção de Fritas Grande'  ,'N', 10.00, 'Fritas Grande, serve 6 pessoas')
+        ,  ('Fritas com Queijo e Bacon','N', 15.00, 'Fritas cobertas por queijo cheddar e catupiry e bacon')
+        ,  ('Porção de Onion Ring'     ,'N', 9.00 , 'Porção Grande, serve até 5 pessoas')
+        ,  ('Canelone'                 ,'N', 27.00, 'Rolinhos de massa fresquinha recheados ao molho branco 4 queijos')
+        ,  ('H2O Limoneto'             ,'S', 7.00 , 'Bebida gaseificada sabor limão, H2O Limoneto')
+	,  ('Água Com Gás'             ,'S', 5.00 , 'Bebida gaseificada, Água Com Gás');
+
+
+
+INSERT INTO cargo (descricao, sn_ativo)
+    VALUES ('Garçom'                   ,'S')
+    	,  ('Balconista'               ,'S')
+        ,  ('Cozinheiro(a)'            ,'S')
+        ,  ('Gerente'                  ,'S')
+    	,  ('Chefe de Cozinha'         ,'S')
+        ,  ('Chapeiro(a)'              ,'N')
+        ,  ('Segurança'                ,'S');
+
+
+
+INSERT INTO funcionario (nome_funcionario, cod_cargo, fone, email, dt_inicio, dt_nascimento, dt_fim)
+    VALUES 
+    ('Mariana da Silva Nascimento', 4, 99287794, 'mariana.nascimento@MelhorSabor.com.br',  STR_TO_DATE('01/03/2021', '%d/%m/%Y'),  STR_TO_DATE('30/06/1981', '%d/%m/%Y'), NULL)
+   ,('William José dos Santos', 1, 995887865, 'william.santos@MelhorSabor.com.br',  STR_TO_DATE('12/06/2021', '%d/%m/%Y'),  STR_TO_DATE('31/01/1995', '%d/%m/%Y'), NULL)
+   ,('Carla Rojas Pereira', 1, 994332189, 'carla.pereira@MelhorSabor.com.br',  STR_TO_DATE('15/08/2021', '%d/%m/%Y'),  STR_TO_DATE('22/09/1993', '%d/%m/%Y'), STR_TO_DATE('02/02/2022', '%d/%m/%Y'))
+   ,('Antônio Melo de Castro', 7, 995956823, 'antonio.castro@MelhorSabor.com.br',  STR_TO_DATE('30/07/2015', '%d/%m/%Y'),  STR_TO_DATE('31/01/1986', '%d/%m/%Y'), NULL)
+   ,('Melissa Duarte de Oliveira', 3, 994547833, 'melissa.oliveira@MelhorSabor.com.br',  STR_TO_DATE('15/08/2021', '%d/%m/%Y'),  STR_TO_DATE('11/05/1991', '%d/%m/%Y'), NULL)
+   ,('Heitor Alberto Rosa', 3, 992142142, 'heitor.rosa@MelhorSabor.com.br',  STR_TO_DATE('15/08/2021', '%d/%m/%Y'),  STR_TO_DATE('04/09/1987', '%d/%m/%Y'), NULL)
+   ,('Eduardo Ribas Teixeira', 1, 995882347, 'eduardo.teixeira@MelhorSabor.com.br',  STR_TO_DATE('20/08/2021', '%d/%m/%Y'),  STR_TO_DATE('24/11/1998', '%d/%m/%Y'), NULL)
+   ,('Rogério Quadros Souza', 1, 995847585, 'rogerio.souza@MelhorSabor.com.br',  STR_TO_DATE('10/01/2022', '%d/%m/%Y'),  STR_TO_DATE('05/01/2002', '%d/%m/%Y'), NULL);
+
+
+-- Inserções Iniciais para popular
+
+INSERT INTO pedido (cod_refeicao, cod_cliente, cod_funcionario, dt_pedido, observacao)
+    VALUES (1, 2, 2,  CURRENT_DATE, 'Guaraná')
+    	  ,(9, 3, 8,  CURRENT_DATE, NULL)
+          ,(2, 5, 7,  CURRENT_DATE, NULL)
+          ,(5, 5, 7,  CURRENT_DATE, 'sem tomate')
+          ,(11, 1, 7, CURRENT_DATE, 'dobro de queijo')
+          ,(1, 6, 2,  CURRENT_DATE, NULL);
+
+
+-- Inserções para testar a trigger e procedure
+
+INSERT INTO pedido (cod_refeicao, cod_cliente, cod_funcionario, dt_pedido, observacao)
+    VALUES (4, 4, 2, STR_TO_DATE('23/04/2022', '%d/%m/%Y'), NULL);
+
+
+INSERT INTO pedido (cod_refeicao, cod_cliente, cod_funcionario, dt_pedido, observacao)
+    VALUES (6, 3, 2, STR_TO_DATE('23/04/2022', '%d/%m/%Y'), NULL);
+
+
+-- Update para testar Trigger trg_cancela_pedido
+
+UPDATE pedido SET SN_CANCELADO = 'S' WHERE COD_PEDIDO = 6;
+
+
+
+-- Criação da Procedure prc_desconto_aniversario
+
+DELIMITER $
+
+CREATE OR REPLACE PROCEDURE prc_desconto_aniversario() 
+
+BEGIN
+
+DECLARE cd_cliente int;
+ 
+SELECT cliente.cod_cliente INTO cd_cliente
+  FROM cliente, pedido 
+ WHERE cliente.cod_cliente = pedido.cod_cliente
+   AND SUBSTR(pedido.dt_pedido,6,7) = SUBSTR(cliente.dt_nascimento,6,7)
+   AND SUBSTR(CURRENT_DATE,6,7) = SUBSTR(cliente.dt_nascimento,6,7);
+ 
+ 
+    UPDATE conta SET valor_total = valor_total - ultimo_valor
+    WHERE cod_cliente = cd_cliente;
+    
+    UPDATE conta SET ultimo_valor = 00.00
+    WHERE cod_cliente = cd_cliente;
+  
+
+END $
+
+
+
+-- Criação da Procedure prc_cancela_pedido
+
+DELIMITER $
+
+CREATE OR REPLACE PROCEDURE prc_cancela_pedido() 
+
+BEGIN
+
+DECLARE cd_ped, cd_ref, cd_cli, cd_func int;
+DECLARE vl_preco DECIMAL(11.2);
+DECLARE sn_cancel VARCHAR(5);
+DECLARE data_pedido DATE;
+
+DECLARE C_CANCELADO CURSOR FOR 
+ 
+SELECT pedido.cod_pedido
+      ,pedido.cod_refeicao	
+      ,pedido.cod_cliente
+      ,pedido.cod_funcionario
+      ,pedido.dt_pedido
+      ,pedido.sn_cancelado
+      ,cardapio.preco
+  FROM pedido, cardapio
+ WHERE sn_cancelado = 'S'
+   AND pedido.cod_refeicao = cardapio.cod_refeicao;
+
+OPEN C_CANCELADO; 
+
+LOOP
+  FETCH C_CANCELADO INTO cd_ped, cd_ref, cd_cli, cd_func, data_pedido, sn_cancel, vl_preco;
+ 
+ IF cd_ped NOT IN (SELECT DISTINCT COD_PEDIDO FROM pedido_cancelado)
+ 
+ THEN
+ 
+    INSERT INTO PEDIDO_CANCELADO (
+        			 cod_pedido
+       				,cod_refeicao
+       				,cod_cliente
+       				,cod_funcionario
+       				,dt_pedido
+       				,dt_cancelado )
+     		 VALUES (
+  					cd_ped
+                   ,cd_ref
+                   ,cd_cli
+                   ,cd_func
+                   ,data_pedido
+                   ,CURRENT_DATE
+                   );
+                   
+     UPDATE CONTA SET VALOR_TOTAL = VALOR_TOTAL - vl_preco
+     	WHERE CONTA.cod_cliente = cd_cli;
+
+END IF;
+
+END LOOP;
+
+CLOSE C_CANCELADO;
+
+END $
+
+
+Link video
+https://youtu.be/nJ8fstbi8wQ
+
+Link GitHub
+https://github.com/FelipeFenalti/Atividade_5_Restaurante_Felipe_Fenalti
